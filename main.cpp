@@ -48,8 +48,9 @@ void deleteTask(int taskNumber, std::vector<Task>& tasks)
     taskNumber -= 1;
     if (taskNumber >= 0 && taskNumber <static_cast<int>(tasks.size()))
     {
-        std::swap(tasks[taskNumber], tasks.back());
-        tasks.pop_back();
+        // std::swap(tasks[taskNumber], tasks.back());
+        // tasks.pop_back();
+        tasks.erase(tasks.begin() + taskNumber);
         std::cout << "Task " << taskNumber + 1 << " deleted!" << std::endl;
     } else {
         std::cout << "Task " << taskNumber + 1 << " not found!" << std::endl;
@@ -69,7 +70,6 @@ int main()
         char command;
         std::cout << "Choose command (a - add, v - view all, t - toggle task completion, d - delete task, q - quit): " << " ";
         std::cin >> command;
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         switch (command) {
         case 'a':
             std::cout << "Adding task..." << std::endl;

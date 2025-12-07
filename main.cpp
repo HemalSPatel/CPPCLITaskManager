@@ -7,21 +7,25 @@ struct Task {
     bool completed{};
 };
 
-void printTasks(const std::vector<Task>& tasks)
-{
-    for (const Task& task : tasks)
-    {
-        std::cout << task.title << std::endl;
-    }
-}
 void addTask(std::vector<Task>& tasks)
 {
     std::string title;
     std:: cout << "Enter title of new task: " << " ";
-    std::cin >> title;
+    std::cin.ignore();
+    std::getline(std::cin,title);
     tasks.push_back(Task{title});
+    std::cout << "Task Added!" << std::endl;
+}
 
-
+void viewTasks(const std::vector<Task>& tasks)
+{
+    if (tasks.empty()) {
+        std::cout << "No Tasks found!" << std::endl;
+    } else {
+        for (const Task& task : tasks) {
+            std::cout << task.title << std::endl;
+        }
+    }
 }
 
 int main()
@@ -38,11 +42,11 @@ int main()
         switch (command) {
         case 'a':
             std::cout << "Adding task..." << std::endl;
-            // function to add a task
+            addTask(tasks);
             break;
         case 'v':
             std::cout << "Viewing tasks..." << std::endl;
-            printTasks(tasks);
+            viewTasks(tasks);
             break;
         case 'q':
             std::cout << "Quitting..." << std::endl;

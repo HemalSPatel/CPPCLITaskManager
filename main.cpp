@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <limits>
 
 struct Task {
     std::string title;
@@ -10,7 +11,6 @@ struct Task {
 void addTask(std::vector<Task>& tasks) {
     std::string title;
     std:: cout << "Enter title of new task: " << " ";
-    std::cin.ignore();
     std::getline(std::cin,title);
     tasks.push_back(Task{title});
     std::cout << "Task Added!" << std::endl;
@@ -34,8 +34,7 @@ void viewTasks(const std::vector<Task>& tasks) {
 
 void toggleTaskStatus(int taskNumber, std::vector<Task>& tasks) {
     taskNumber -= 1;
-    if (taskNumber >= 0 && taskNumber < (int)tasks.size())
-    {
+    if (taskNumber >= 0 && taskNumber < (int)tasks.size()) {
         tasks[taskNumber].completed = !tasks[taskNumber].completed;
         std::cout << "Task " << taskNumber + 1 << " updated!" << std::endl;
     } else {
@@ -46,8 +45,8 @@ void toggleTaskStatus(int taskNumber, std::vector<Task>& tasks) {
 void deleteTask(int taskNumber, std::vector<Task>& tasks)
 {
     taskNumber -= 1;
-    if (taskNumber >= 0 && taskNumber <static_cast<int>(tasks.size()))
-    {
+    if (taskNumber >= 0 && taskNumber <static_cast<int>(tasks.size())) {
+        // Deleting from the task list in O(1) (does not keep in-order property)
         // std::swap(tasks[taskNumber], tasks.back());
         // tasks.pop_back();
         tasks.erase(tasks.begin() + taskNumber);
@@ -58,18 +57,15 @@ void deleteTask(int taskNumber, std::vector<Task>& tasks)
 
 }
 
-
-int main()
-{
+int main() {
     std::vector<Task> tasks;
-
-
     bool running = true;
-    while (running)
-    {
+    while (running) {
         char command;
         std::cout << "Choose command (a - add, v - view all, t - toggle task completion, d - delete task, q - quit): " << " ";
         std::cin >> command;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         switch (command) {
         case 'a':
             std::cout << "Adding task..." << std::endl;
@@ -103,8 +99,7 @@ int main()
                     std::cout << "Invalid input. Please enter a integer!" << std::endl;
                     std::cin.clear();
                     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                } else
-                {
+                } else {
                     validDeleteInput = true;
                 }
             } while (!validDeleteInput);

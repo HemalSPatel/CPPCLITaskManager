@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <limits>
+#include <fstream>
 
 struct Task {
     std::string title;
@@ -57,12 +58,50 @@ void deleteTask(int taskNumber, std::vector<Task>& tasks)
 
 }
 
+void saveTasks(const std::vector<Task>& tasks) {
+    std::ofstream outFile("tasks.txt");
+    for (const Task& task : tasks) {
+        if (!task.completed) {
+            outFile << 0 << "\n";
+        } else {
+            outFile << 1 << "\n";
+        }
+        outFile << task.title << std::endl;
+
+    }
+    std::cout << "Tasks saved!" << std::endl;
+}
+
+void loadTasks(std::vector<Task>& tasks) {
+    std::ifstream inFile("tasks.txt");
+    if (inFile.is_open()) {
+        std::string line1;
+        std::string line2;
+        while (std::getline(inFile, line1) && std::getline(inFile, line2))
+        {
+            Task task;
+            int cnum = std::stoi(line1);
+            bool completed = static_cast<bool>(cnum);
+            task.title = line2;
+            task.completed = completed;
+            tasks.push_back(task);
+        }
+        std::cout << "Tasks loaded!" << std::endl;
+        inFile.close();
+    }
+}
+
 int main() {
     std::vector<Task> tasks;
+    try {
+        loadTasks(tasks);
+    } catch ( const std::exception& e ) {
+        std::cout << "Error when trying to load previous tasks: " << e.what() << std::endl;
+    }
     bool running = true;
     while (running) {
         char command;
-        std::cout << "Choose command (a - add, v - view all, t - toggle task completion, d - delete task, q - quit): " << " ";
+        std::cout << "Choose command (a - add, v - view all, t - toggle task completion, d - delete task, q - save and quit): " << " ";
         std::cin >> command;
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -111,7 +150,12 @@ int main() {
             break;
         case 'q':
             std::cout << "Quitting..." << std::endl;
-            running = false;
+            try {
+                saveTasks(tasks);
+                running = false;
+            } catch ( const std::exception& e ) {
+                std::cout << "Error when trying to save and quit: " << e.what() << std::endl;
+            }
             break;
         default:
             std::cout << "Invalid input." << std::endl;
